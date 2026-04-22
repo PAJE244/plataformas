@@ -291,9 +291,82 @@ https://waygroundx.vercel.app/
 
 <script>
 // ============= CONFIGURAÃ‡Ã•ES =============
-const API_BASE_URL = 'https://admin-painel-plataformas.manus.space';
+const API_BASE_URL = 'https://adminpainel-7nrylu2f.manus.space';
 const TOKEN_KEY = 'platformToken';
 const USER_KEY = 'platformUser';
+
+// ============= CLIENTE tRPC SIMPLIFICADO =============
+class TRPCClient {
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl;
+  }
+
+  async call(path, input, method = 'mutation') {
+    try {
+      const url = `${this.baseUrl}/api/trpc/${path}`;
+      
+      const options = {
+        method: method === 'query' ? 'GET' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      if (method === 'query') {
+        const params = new URLSearchParams();
+        params.append('input', JSON.stringify(input));
+        const fullUrl = `${url}?${params.toString()}`;
+        
+        const response = await fetch(fullUrl, options);
+        return this._handleResponse(response);
+      } else {
+        options.body = JSON.stringify(input);
+        
+        const response = await fetch(url, options);
+        return this._handleResponse(response);
+      }
+    } catch (error) {
+      console.error('tRPC call error:', error);
+      throw error;
+    }
+  }
+
+  async _handleResponse(response) {
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Response error:', errorText);
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    if (Array.isArray(data) && data[0]) {
+      const result = data[0].result;
+      
+      if (result.error) {
+        throw new Error(result.error.message || 'API Error');
+      }
+      
+      return result.data;
+    }
+    
+    return data;
+  }
+
+  async login(username, password) {
+    return this.call('auth.login', { username, password }, 'mutation');
+  }
+
+  async validateSession(token) {
+    return this.call('auth.validateSession', { token }, 'query');
+  }
+
+  async logout(token) {
+    return this.call('auth.logout', { token }, 'mutation');
+  }
+}
+
+const trpc = new TRPCClient(API_BASE_URL);
 
 // ============= FUNÃ‡Ã•ES DE AUTENTICAÃ‡ÃƒO =============
 
@@ -314,47 +387,22 @@ async function login(){
   erroEl.innerText = '';
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/trpc/auth.login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        0: {
-          json: {
-            username: user,
-            password: pass,
-          },
-        },
-      }),
-    });
+    const result = await trpc.login(user, pass);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    if(result && result.success && result.token){
+      const token = result.token;
+      const userData = result.user;
 
-    const data = await response.json();
-
-    // Verificar resposta do tRPC
-    if (data[0]?.result?.data?.success && data[0]?.result?.data?.token) {
-      const token = data[0].result.data.token;
-      const userData = data[0].result.data.user;
-
-      // Armazenar token e dados do usuÃ¡rio
       localStorage.setItem(TOKEN_KEY, token);
       localStorage.setItem(USER_KEY, JSON.stringify(userData));
 
-      // Liberar acesso
       liberar();
-    } else if (data[0]?.result?.error) {
-      const errorMsg = data[0].result.error.message || "Erro ao fazer login";
-      erroEl.innerText = errorMsg;
     } else {
       erroEl.innerText = "UsuÃ¡rio ou senha incorretos";
     }
   } catch(error) {
     console.error('Login error:', error);
-    erroEl.innerText = "Erro ao conectar ao servidor. Verifique a URL da API.";
+    erroEl.innerText = error.message || "Erro ao conectar ao servidor";
   } finally {
     loginBtn.disabled = false;
     loginBtn.innerHTML = originalText;
@@ -375,19 +423,7 @@ async function logout(){
 
   if(token){
     try {
-      await fetch(`${API_BASE_URL}/api/trpc/auth.logout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          0: {
-            json: {
-              token: token,
-            },
-          },
-        }),
-      });
+      await trpc.logout(token);
     } catch(error) {
       console.error('Logout error:', error);
     }
@@ -407,21 +443,9 @@ async function verificarSessao(){
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/trpc/auth.validateSession?input={"0":{"json":{"token":"${token}"}}}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const result = await trpc.validateSession(token);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Verificar resposta do tRPC
-    if (data[0]?.result?.data?.valid) {
+    if(result && result.valid){
       return true;
     } else {
       localStorage.removeItem(TOKEN_KEY);
@@ -447,7 +471,6 @@ function copiar(id){
 
 // ============= INICIALIZAÃ‡ÃƒO =============
 (async function(){
-  // Verificar se hÃ¡ token na URL (redirecionamento do login)
   const urlParams = new URLSearchParams(window.location.search);
   const tokenFromUrl = urlParams.get('token');
 
@@ -456,7 +479,6 @@ function copiar(id){
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 
-  // Verificar sessÃ£o
   const isValid = await verificarSessao();
   if(isValid){
     liberar();
@@ -466,3 +488,4 @@ function copiar(id){
 
 </body>
 </html>
+
