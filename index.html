@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100% PLATAFORMAS</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+
+body{
+  background:linear-gradient(135deg,#0a0a0a,#1a0000);
+  color:#fff;
+}
+
+/* HEADER */
+header{
+  text-align:center;
+  padding:30px;
+  font-size:30px;
+  font-weight:bold;
+  letter-spacing:3px;
+  background:rgba(0,0,0,0.6);
+}
+
+/* TUTORIAL */
+.tutorial{
+  margin:30px;
+  padding:20px;
+  background:rgba(255,0,0,0.08);
+  border:1px solid rgba(255,0,0,0.3);
+  border-radius:15px;
+  animation:fadeUp 1s ease;
+}
+
+.tutorial h2{
+  color:#ff4d4d;
+  margin-bottom:10px;
+}
+
+.tutorial p{
+  font-size:14px;
+  opacity:0.9;
+  margin-bottom:8px;
+}
+
+/* GRID */
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:25px;
+  padding:30px;
+}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  padding:20px;
+  transition:0.4s;
+  animation:fadeUp 0.8s ease;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 0 20px rgba(255,0,0,0.3);
+}
+
+.card h2{
+  color:#ff4d4d;
+  margin-bottom:10px;
+}
+
+.script-box{
+  background:#000;
+  padding:12px;
+  border-radius:10px;
+  font-size:12px;
+  overflow-x:auto;
+  margin-bottom:15px;
+}
+
+/* BOTÕES */
+.buttons{
+  display:flex;
+  gap:10px;
+}
+
+button,a{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  text-align:center;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.copy{
+  background:#ff4d4d;
+  color:#fff;
+}
+
+.access{
+  background:#fff;
+  color:#000;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  opacity:0.7;
+}
+
+.brand{
+  color:#ff4d4d;
+  margin-top:5px;
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<header>100% PLATAFORMAS</header>
+
+<!-- TUTORIAL -->
+<div class="tutorial">
+  <h2>📌 Como usar scripts com favoritos</h2>
+
+  <p><b>1.</b> Clique em "Copiar Script".</p>
+  <p><b>2.</b> Crie um novo favorito no navegador (estrela ⭐).</p>
+  <p><b>3.</b> Edite o favorito:</p>
+  <p>→ Nome: escolha qualquer nome (ex: "Script1")</p>
+  <p>→ URL: cole o script copiado</p>
+
+  <p><b>4.</b> Salve o favorito.</p>
+
+  <p><b>5.</b> Para usar:</p>
+  <p>→ Abra o site desejado</p>
+  <p>→ Clique no favorito OU digite o nome na barra de busca</p>
+
+  <p>⚠️ Alguns navegadores podem bloquear scripts automaticamente.</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Leia Paraná</h2>
+    <div class="script-box" id="s1">
+javascript:(function(){fetch('https://cdn.jsdelivr.net/gh/mzzvxm/LeiaPRBypass@latest/script.js').then(r=>r.text()).then(eval);})();
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s1')">Copiar</button>
+      <a class="access" href="https://leiaparana.odilo.us/?locale=pt" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Redação Paraná</h2>
+    <div class="script-box" id="s2">
+javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/mzzvxm/RedacaoBypass@main/script.js?t='+Date.now();document.head.appendChild(s)})();
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s2')">Copiar</button>
+      <a class="access" href="https://redacao.pr.gov.br/" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Khan Academy</h2>
+    <div class="script-box" id="s3">
+javascript:(async()=>{let e=window.location.hostname;if("khanacademy.org"!==e.split(".")?.slice(1)?.join("."))return;let a=e.split(".")[0];open(`https://khan.cupiditys.lol/?token=${(await (await fetch(`/api/internal/graphql/createTransferAuthTokenMutation?lang=${"www"===a?"en":a}&app=khanacademy`,{headers:{"content-type":"application/json","x-ka-fkey":"1"},referrer:"/settings/account",body:JSON.stringify({operationName:"createTransferAuthTokenMutation",query:"mutation createTransferAuthTokenMutation($canvasProfileKeyName: String) {\n  createTransferAuthToken(canvasProfileKeyName: $canvasProfileKeyName) {\n    token\n    __typename\n  }\n}",variables:{}}),method:"POST",mode:"cors",credentials:"include"})).json()).data.createTransferAuthToken.token}&l=${a}&c=${window.__KA_DATA__["KA-fastly-country"]}`)})();
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s3')">Copiar</button>
+      <a class="access" href="https://www.khanacademy.org/" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Quizizz</h2>
+    <div class="script-box" id="s4">
+https://waygroundx.vercel.app/
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s4')">Copiar</button>
+      <a class="access" href="https://waygroundx.vercel.app/" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+© 100% Plataformas
+<div class="brand">feito por Pajé 01</div>
+</footer>
+
+<script>
+function copiar(id){
+  const texto = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(texto);
+  alert("Copiado!");
+}
+</script>
+
+</body>
+</html>
