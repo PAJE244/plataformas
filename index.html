@@ -56,6 +56,27 @@ body{
   color:#fff;
   font-weight:bold;
   cursor:pointer;
+  margin-top:10px;
+}
+
+.login-box button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+.loading-spinner{
+  display:inline-block;
+  width:16px;
+  height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top:2px solid #fff;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+  margin-right:8px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
 }
 
 /* HEADER */
@@ -66,6 +87,18 @@ header{
   font-weight:bold;
   letter-spacing:3px;
   background:rgba(0,0,0,0.6);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header-title{
+  flex:1;
+}
+
+.user-info{
+  font-size:14px;
+  color:#ff4d4d;
 }
 
 .tutorial{
@@ -87,6 +120,12 @@ header{
   background:rgba(255,255,255,0.05);
   border-radius:20px;
   padding:20px;
+  transition:transform 0.2s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  background:rgba(255,255,255,0.08);
 }
 
 .script-box{
@@ -96,6 +135,9 @@ header{
   font-size:12px;
   overflow-x:auto;
   margin-bottom:15px;
+  max-height:100px;
+  overflow-y:auto;
+  word-break:break-all;
 }
 
 .buttons{
@@ -112,6 +154,11 @@ button,a{
   text-align:center;
   text-decoration:none;
   font-weight:bold;
+  transition:opacity 0.2s;
+}
+
+button:hover,a:hover{
+  opacity:0.8;
 }
 
 .copy{background:#ff4d4d;color:#fff;}
@@ -120,6 +167,7 @@ button,a{
 footer{
   text-align:center;
   padding:20px;
+  border-top:1px solid rgba(255,255,255,0.1);
 }
 
 /* LOGOUT */
@@ -131,6 +179,27 @@ footer{
   padding:10px 15px;
   border-radius:10px;
   cursor:pointer;
+  border:none;
+  color:#fff;
+  font-weight:bold;
+  z-index:100;
+}
+
+.logout:hover{
+  background:#ff3333;
+}
+
+/* ERROR MESSAGE */
+.error-msg{
+  color:#ff6b6b;
+  font-size:12px;
+  margin-top:8px;
+}
+
+.success-msg{
+  color:#51cf66;
+  font-size:12px;
+  margin-top:8px;
 }
 </style>
 </head>
@@ -141,27 +210,32 @@ footer{
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <h2>Login</h2>
-    <input type="text" id="user" placeholder="Usuário">
-    <input type="password" id="pass" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-    <p id="erro" style="color:red;"></p>
+    <input type="text" id="user" placeholder="UsuÃ¡rio" autocomplete="username">
+    <input type="password" id="pass" placeholder="Senha" autocomplete="current-password">
+    <button id="loginBtn" onclick="login()">Entrar</button>
+    <p id="erro" class="error-msg"></p>
   </div>
 </div>
 
 <!-- SITE -->
 <div id="site" style="display:none;">
 
-<header>100% PLATAFORMAS</header>
+<header>
+  <div class="header-title">100% PLATAFORMAS</div>
+  <div class="user-info">
+    OlÃ¡, <span id="username">usuÃ¡rio</span>
+  </div>
+</header>
 
 <div class="tutorial">
-  <h2>📌 Como usar scripts com favoritos</h2>
-  <p>Copie e use nos favoritos.</p>
+  <h2>ðŸ“Œ Como usar scripts com favoritos</h2>
+  <p>Copie e use nos favoritos do seu navegador.</p>
 </div>
 
 <div class="container">
 
   <div class="card">
-    <h2>Leia Paraná</h2>
+    <h2>Leia ParanÃ¡</h2>
     <div class="script-box" id="s1">
 javascript:(function(){fetch('https://cdn.jsdelivr.net/gh/mzzvxm/LeiaPRBypass@latest/script.js').then(r=>r.text()).then(eval);})();
     </div>
@@ -172,7 +246,7 @@ javascript:(function(){fetch('https://cdn.jsdelivr.net/gh/mzzvxm/LeiaPRBypass@la
   </div>
 
   <div class="card">
-    <h2>Redação Paraná</h2>
+    <h2>RedaÃ§Ã£o ParanÃ¡</h2>
     <div class="script-box" id="s2">
 javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/mzzvxm/RedacaoBypass@main/script.js?t='+Date.now();document.head.appendChild(s)})();
     </div>
@@ -207,61 +281,187 @@ https://waygroundx.vercel.app/
 </div>
 
 <footer>
-© 100% Plataformas
-<div class="brand">feito por Pajé 01</div>
+Â© 100% Plataformas
+<div class="brand">feito por PajÃ© 01</div>
 </footer>
 
-<div class="logout" onclick="logout()">Sair</div>
+<button class="logout" onclick="logout()">Sair</button>
 
 </div>
 
 <script>
-// 🔐 SIMULAÇÃO DE BACKEND (PAINEL ADMIN)
-function getCredenciais(){
-  return {
-    usuario: "admin",
-    senha: "1234"
-  };
-}
+// ============= CONFIGURAÃ‡Ã•ES =============
+const API_BASE_URL = 'https://admin-painel-plataformas.manus.space';
+const TOKEN_KEY = 'platformToken';
+const USER_KEY = 'platformUser';
 
-// LOGIN
-function login(){
-  const user = document.getElementById("user").value;
+// ============= FUNÃ‡Ã•ES DE AUTENTICAÃ‡ÃƒO =============
+
+async function login(){
+  const user = document.getElementById("user").value.trim();
   const pass = document.getElementById("pass").value;
+  const loginBtn = document.getElementById("loginBtn");
+  const erroEl = document.getElementById("erro");
 
-  const cred = getCredenciais();
+  if(!user || !pass){
+    erroEl.innerText = "Preencha todos os campos";
+    return;
+  }
 
-  if(user === cred.usuario && pass === cred.senha){
-    localStorage.setItem("auth", "true");
-    liberar();
-  }else{
-    document.getElementById("erro").innerText = "Usuário ou senha incorretos";
+  loginBtn.disabled = true;
+  const originalText = loginBtn.innerText;
+  loginBtn.innerHTML = '<span class="loading-spinner"></span>Entrando...';
+  erroEl.innerText = '';
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/trpc/auth.login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        0: {
+          json: {
+            username: user,
+            password: pass,
+          },
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Verificar resposta do tRPC
+    if (data[0]?.result?.data?.success && data[0]?.result?.data?.token) {
+      const token = data[0].result.data.token;
+      const userData = data[0].result.data.user;
+
+      // Armazenar token e dados do usuÃ¡rio
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_KEY, JSON.stringify(userData));
+
+      // Liberar acesso
+      liberar();
+    } else if (data[0]?.result?.error) {
+      const errorMsg = data[0].result.error.message || "Erro ao fazer login";
+      erroEl.innerText = errorMsg;
+    } else {
+      erroEl.innerText = "UsuÃ¡rio ou senha incorretos";
+    }
+  } catch(error) {
+    console.error('Login error:', error);
+    erroEl.innerText = "Erro ao conectar ao servidor. Verifique a URL da API.";
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = originalText;
   }
 }
 
 // LIBERAR ACESSO
 function liberar(){
+  const userData = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+  document.getElementById("username").innerText = userData.username || 'usuÃ¡rio';
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("site").style.display = "block";
 }
 
 // LOGOUT
-function logout(){
-  localStorage.removeItem("auth");
+async function logout(){
+  const token = localStorage.getItem(TOKEN_KEY);
+
+  if(token){
+    try {
+      await fetch(`${API_BASE_URL}/api/trpc/auth.logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          0: {
+            json: {
+              token: token,
+            },
+          },
+        }),
+      });
+    } catch(error) {
+      console.error('Logout error:', error);
+    }
+  }
+
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
   location.reload();
 }
 
-// VERIFICAR SESSÃO
-if(localStorage.getItem("auth") === "true"){
-  liberar();
+// VERIFICAR SESSÃƒO
+async function verificarSessao(){
+  const token = localStorage.getItem(TOKEN_KEY);
+
+  if(!token){
+    return false;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/trpc/auth.validateSession?input={"0":{"json":{"token":"${token}"}}}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Verificar resposta do tRPC
+    if (data[0]?.result?.data?.valid) {
+      return true;
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      return false;
+    }
+  } catch(error) {
+    console.error('Session validation error:', error);
+    return false;
+  }
 }
 
 // COPIAR
 function copiar(id){
   const texto = document.getElementById(id).innerText;
-  navigator.clipboard.writeText(texto);
-  alert("Copiado!");
+  navigator.clipboard.writeText(texto).then(() => {
+    alert("Copiado para a Ã¡rea de transferÃªncia!");
+  }).catch(err => {
+    console.error('Erro ao copiar:', err);
+    alert("Erro ao copiar. Tente novamente.");
+  });
 }
+
+// ============= INICIALIZAÃ‡ÃƒO =============
+(async function(){
+  // Verificar se hÃ¡ token na URL (redirecionamento do login)
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get('token');
+
+  if(tokenFromUrl){
+    localStorage.setItem(TOKEN_KEY, tokenFromUrl);
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  // Verificar sessÃ£o
+  const isValid = await verificarSessao();
+  if(isValid){
+    liberar();
+  }
+})();
 </script>
 
 </body>
