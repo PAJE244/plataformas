@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>100% PLATAFORMAS</title>
 
-<script src="https://openfpcdn.io/fingerprintjs/v3"></script>
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
 
@@ -52,7 +50,7 @@ body{
   cursor:pointer;
 }
 
-/* ADMIN CENTRAL */
+/* ADMIN */
 #adminPanel{
   position:fixed;
   top:50%;
@@ -122,7 +120,6 @@ footer{text-align:center;padding:20px;opacity:0.7;}
   <input id="novaSenha" placeholder="Nova senha">
   <button onclick="criar()">Criar acesso</button>
   <ul id="lista"></ul>
-  <button onclick="fecharAdmin()">Fechar</button>
 </div>
 
 <!-- SITE -->
@@ -152,66 +149,76 @@ footer{text-align:center;padding:20px;opacity:0.7;}
 
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<!-- FIREBASE COMPAT -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyAUaobe_8CWFMG2gnHXUsdVEPTVsvYyIPI",
   authDomain: "plataformas-c1986.firebaseapp.com",
-  projectId: "plataformas-c1986",
-  storageBucket: "plataformas-c1986.firebasestorage.app",
-  messagingSenderId: "557315288894",
-  appId: "1:557315288894:web:8379f4863da5280fa4866f"
+  projectId: "plataformas-c1986"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-let ip="", device="";
+let ip = "unknown";
+let device = navigator.userAgent;
 
-async function getIP(){
-  ip = (await (await fetch("https://api64.ipify.org?format=json")).json()).ip;
-}
+// pegar IP
+fetch("https://api64.ipify.org?format=json")
+.then(r=>r.json())
+.then(d=>ip=d.ip)
+.catch(()=>ip="offline");
 
-async function getDevice(){
-  const fp = await FingerprintJS.load();
-  device = (await fp.get()).visitorId;
-}
-
-await getIP();
-await getDevice();
-
-window.login = async function(){
+// LOGIN
+function login(){
   let senha = document.getElementById("senha").value.trim();
 
+  if(!senha){
+    msg("Digite uma senha");
+    return;
+  }
+
+  // ADMIN
   if(senha === "cavalo"){
     liberar(true);
     return;
   }
 
-  let ref = doc(db,"acessos",senha);
-  let snap = await getDoc(ref);
+  let ref = db.collection("acessos").doc(senha);
 
-  if(!snap.exists()){
-    msg("Senha inválida");
-    return;
-  }
+  ref.get().then(doc=>{
 
-  let data = snap.data();
+    if(!doc.exists){
+      msg("Senha inválida");
+      return;
+    }
 
-  if(!data.ip){
-    await updateDoc(ref,{ip,device});
-  }
+    let data = doc.data();
 
-  if(data.ip !== ip || data.device !== device){
-    msg("Bloqueado nesse dispositivo");
-    return;
-  }
+    // primeiro acesso
+    if(!data.ip){
+      ref.update({ ip: ip, device: device });
+      liberar(false);
+      return;
+    }
 
-  liberar(false);
-};
+    // verificação
+    if(data.ip !== ip || data.device !== device){
+      msg("Bloqueado nesse dispositivo");
+      return;
+    }
 
+    liberar(false);
+
+  }).catch(()=>{
+    msg("Erro ao conectar");
+  });
+}
+
+// LIBERAR
 function liberar(admin){
   document.getElementById("loginOverlay").style.display="none";
   document.getElementById("siteContent").style.display="block";
@@ -222,29 +229,34 @@ function liberar(admin){
   }
 }
 
-window.fecharAdmin = function(){
-  document.getElementById("adminPanel").style.display="none";
-};
-
-window.criar = async function(){
+// CRIAR
+function criar(){
   let senha = document.getElementById("novaSenha").value.trim();
   if(!senha) return;
 
-  await setDoc(doc(db,"acessos",senha),{ip:null,device:null});
-  carregar();
-};
+  db.collection("acessos").doc(senha).set({
+    ip:null,
+    device:null
+  });
 
-async function carregar(){
+  carregar();
+}
+
+// LISTAR
+function carregar(){
   let lista=document.getElementById("lista");
   lista.innerHTML="";
-  let snap=await getDocs(collection(db,"acessos"));
-  snap.forEach(d=>{
-    let li=document.createElement("li");
-    li.innerText=d.id+" | "+(d.data().ip||"novo");
-    lista.appendChild(li);
+
+  db.collection("acessos").get().then(snap=>{
+    snap.forEach(d=>{
+      let li=document.createElement("li");
+      li.innerText=d.id+" | "+(d.data().ip||"novo");
+      lista.appendChild(li);
+    });
   });
 }
 
+// MSG
 function msg(t){
   document.getElementById("msg").innerText=t;
 }
